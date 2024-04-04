@@ -2,11 +2,11 @@ const itemForm = document.getElementById("item-form");
 const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const itemClear = document.getElementById("clear");
+const filter = document.getElementById("filter");
 // add
 function addItems(e) {
     e.preventDefault();
     let newItem = itemInput.value;
-
     // validate input
     if (newItem === "") {
         itemInput.style.outline = "1px solid red";
@@ -20,6 +20,8 @@ function addItems(e) {
     itemList.appendChild(item);
     // clear Input
     itemInput.value = "";
+    // checkUi
+    checkUi();
 }
 function createItem(newItem) {
     // create List item
@@ -49,8 +51,10 @@ function createIcon(classes) {
 //delete
 function delItem(e) {
     if (e.target.parentElement.classList.contains("remove-item")) {
-        e.target.parentElement.parentElement.remove();
+        confirm("Are you sure to delete this item ?") &&
+            e.target.parentElement.parentElement.remove();
     }
+    checkUi();
 }
 function clearAll(e) {
     const items = document.querySelectorAll("ul li");
@@ -61,11 +65,41 @@ function clearAll(e) {
     //     return
     // }
     // itemList.innerHTML = "";
-    while(itemList.firstChild){
-        itemList.removeChild(itemList.firstChild)
+    if (confirm("Are you sure to Delete All items?")) {
+        while (itemList.firstChild) {
+            itemList.removeChild(itemList.firstChild);
+        }
+    }
+    checkUi();
+}
+// clearUi
+function checkUi() {
+    const items = itemList.querySelectorAll("li");
+    if (items.length === 0) {
+        itemClear.classList.add("hideIt");
+        filter.classList.add("hideIt");
+    } else {
+        itemClear.classList.remove("hideIt");
+        filter.classList.remove("hideIt");
     }
 }
+// search
+function filterItems(e) {
+    const searchTrim = e.target.value.toLowerCase();
+    const items = document.querySelectorAll("li");
+    items.forEach((item) => {
+        const text = item.firstChild.textContent.toLowerCase();
+        if (text.includes(searchTrim)) {
+            item.classList.remove("hideIt");
+        } else {
+            item.classList.add("hideIt");
+        }
+    });
+}
+
 // events
 itemForm.addEventListener("submit", addItems);
 itemList.addEventListener("click", delItem);
 itemClear.addEventListener("click", clearAll);
+filter.addEventListener("input", filterItems);
+checkUi();
