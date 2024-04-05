@@ -1,5 +1,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap');
 
+:root {
+  --darkMode: #333;
+  --darkModeFontColor: #eee;
+}
+
 *,
 *::before,
 *::after {
@@ -28,6 +33,7 @@ header h1 {
   font-weight: 300;
   margin-left: 10px;
 }
+
 header .mainTitle {
   display: flex;
   justify-content: center;
@@ -41,25 +47,34 @@ header .mainTitle {
   box-shadow: 4px 7px 15px rgba(0, 0, 0, .3);
   transition: scale .7s;
 }
-.container:hover{
+
+.container:hover {
   scale: 1.01;
 }
+
 /* modes */
 
-.modes button{
+.modes button {
   position: absolute;
   top: 0;
   bottom: 0;
   right: 7px;
   border: none;
   cursor: pointer;
+  background-color: transparent;
 }
-#darkMode i {
+
+#darkMode i ,#lightMode i{
   transition: .4s;
 }
-#darkMode:hover i {
-  scale: .9;
+
+#darkMode:hover i,
+#lightMode:hover i {
+  scale: 1.1;
 }
+
+
+
 /* Form & Input */
 .form-input {
   width: 100%;
@@ -153,4 +168,85 @@ header .mainTitle {
 
 .hideIt {
   display: none !important;
+}
+
+.editMode {
+  color: #ccc;
+  scale: 1.1;
+  transition: all .3s;
+}
+
+.update {
+  background-color: #fea70f;
+  color: black;
+  transition: all .5s;
+
+}
+
+.update:hover {
+  background-color: #fea70f;
+  color: white;
+}
+
+.darkMode {
+  background-color: var(--darkMode);
+}
+
+.darkMode .container {
+  background-color: var(--darkMode);
+}
+
+.darkMode h1 {
+  color: var(--darkModeFontColor);
+}
+
+.darkMode .btn {
+  color: var(--darkModeFontColor);
+  background-color: black;
+  transition: .3s;
+}
+
+.darkMode .btn:hover {
+  background-color: rgba(0, 0, 0, 0.466);
+}
+
+.darkMode .btn-clear {
+  color: var(--darkModeFontColor);
+  background-color: black;
+  transition: .3s;
+}
+
+.darkMode .btn-clear:hover {
+  background-color: rgba(0, 0, 0, 0.466);
+}
+
+.darkMode .items li {
+  color: var(--darkModeFontColor);
+  background-color: black;
+}
+
+.darkMode .form-input {
+  color: var(--darkModeFontColor);
+  background-color: black;
+}
+
+.darkMode .editMode {
+  scale: 1.1;
+  transition: all .3s;
+  color: #333 !important;
+}
+
+.darkMode .update {
+  background-color: #fea70f;
+  color: black;
+  transition: all .5s;
+
+}
+
+.darkMode .update:hover {
+  background-color: #fea70f;
+  color: white;
+}
+.darkMode button .fa-lightbulb  {
+  color: white;
 }

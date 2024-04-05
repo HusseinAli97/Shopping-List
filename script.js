@@ -3,25 +3,89 @@ const itemInput = document.getElementById("item-input");
 const itemList = document.getElementById("item-list");
 const itemClear = document.getElementById("clear");
 const filter = document.getElementById("filter");
+const formBtn = document.querySelector(".btn");
+const darkMode = document.querySelector(".modes");
+const dark = document.getElementById("darkMode");
+const light = document.getElementById("lightMode");
+let isEditMode = false;
+// display items from storage
+function displayItems() {
+    const itemsFromStorage = getItemsFromStorage();
+    const mode = getDarkModeStatus();
+    itemsFromStorage.forEach((item) => {
+        addItemToDOM(item);
+    });
+    checkUi();
+    toggleModes(mode);
+}
 // add
-function addItems(e) {
+function onAddItemSubmit(e) {
     e.preventDefault();
     let newItem = itemInput.value;
-    // validate input
+    // checkEditMode
+    if (isEditMode) {
+        const itemToEdit = document.querySelector(".editMode");
+        removeItemFromStorage(itemToEdit.textContent);
+        itemToEdit.classList.remove("editMode");
+        itemToEdit.remove();
+        isEditMode = false;
+    } else {
+        if (checkDuplicate(newItem)) {
+            if (!confirm("item Already exist are you sure to add again?")) {
+                return;
+            }
+        }
+    }
+
+    // add to dom
+    addItemToDOM(newItem);
+    // add to local
+    addItemToStorage(newItem);
+    // checkUi
+    checkUi();
+}
+function addItemToDOM(newItem) {
     if (newItem === "") {
         itemInput.style.outline = "1px solid red";
         itemInput.setAttribute("placeholder", "Please Add Item");
     } else {
         itemInput.removeAttribute("style");
         itemInput.setAttribute("placeholder", "Enter Item");
+        // create items
+        const item = createItem(newItem);
+        itemList.appendChild(item);
+        // clear Input
+        itemInput.value = "";
     }
-    // create items
-    const item = createItem(newItem);
-    itemList.appendChild(item);
-    // clear Input
-    itemInput.value = "";
-    // checkUi
-    checkUi();
+}
+function getItemsFromStorage() {
+    let itemsFromStorage;
+    if (localStorage.getItem("items") === null) {
+        itemsFromStorage = [];
+    } else {
+        itemsFromStorage = JSON.parse(localStorage.getItem("items"));
+    }
+    return itemsFromStorage;
+}
+function onClickItem(e) {
+    if (e.target.parentElement.classList.contains("remove-item")) {
+        delItem(e.target.parentElement.parentElement);
+    } else {
+        setItemToEdit(e.target);
+    }
+}
+function setItemToEdit(item) {
+    isEditMode = true;
+    itemList
+        .querySelectorAll("li")
+        .forEach((li) => li.classList.remove("editMode"));
+    item.classList.add("editMode");
+    formBtn.classList.add("update");
+    formBtn.innerHTML = `
+    <i class='fa-solid fa-pen'></i>
+    Update Item
+    `;
+    itemInput.value = item.textContent;
 }
 function createItem(newItem) {
     // create List item
@@ -47,29 +111,42 @@ function createIcon(classes) {
     icon.className = classes;
     return icon;
 }
-
+function addItemToStorage(item) {
+    const itemsFromStorage = getItemsFromStorage();
+    item !== "" && itemsFromStorage.push(item);
+    // convert to stringify
+    localStorage.setItem("items", JSON.stringify(itemsFromStorage));
+}
+// checkDuplicate
+function checkDuplicate(item) {
+    const itemsFromStorage = getItemsFromStorage();
+    return itemsFromStorage.includes(item);
+}
 //delete
-function delItem(e) {
-    if (e.target.parentElement.classList.contains("remove-item")) {
-        confirm("Are you sure to delete this item ?") &&
-            e.target.parentElement.parentElement.remove();
+function delItem(item) {
+    if (confirm("Are You Sure Delete This item?")) {
+        item.remove();
+
+        // remove from storage
+        removeItemFromStorage(item.textContent);
+
+        checkUi();
     }
-    checkUi();
+}
+// removeItemFromStorage
+function removeItemFromStorage(item) {
+    let itemsFromStorage = getItemsFromStorage();
+    itemsFromStorage = itemsFromStorage.filter((i) => i !== item);
+    localStorage.setItem("items", JSON.stringify(itemsFromStorage));
 }
 function clearAll(e) {
-    const items = document.querySelectorAll("ul li");
-    // if (items !== null) {
-    //     items.forEach((element)=>{
-    //         element.remove()
-    //     })
-    //     return
-    // }
-    // itemList.innerHTML = "";
     if (confirm("Are you sure to Delete All items?")) {
         while (itemList.firstChild) {
             itemList.removeChild(itemList.firstChild);
         }
     }
+    // clear Localstorage
+    localStorage.removeItem("items");
     checkUi();
 }
 // clearUi
@@ -82,6 +159,19 @@ function checkUi() {
         itemClear.classList.remove("hideIt");
         filter.classList.remove("hideIt");
     }
+    formBtn.innerHTML = `<i class="fa-solid fa-plus"></i> Add Item`;
+    formBtn.classList.remove("update");
+    isEditMode = false;
+}
+// darkMode Stats
+function getDarkModeStatus() {
+    let isDarkMode;
+    if (localStorage.getItem("mode") === null) {
+        localStorage.setItem("mode", "lightMode");
+    } else {
+        isDarkMode = localStorage.getItem("mode");
+    }
+    return isDarkMode;
 }
 // search
 function filterItems(e) {
@@ -96,10 +186,29 @@ function filterItems(e) {
         }
     });
 }
+// darkMode
+function switchModes(e) {
+    if (e.target.parentElement.id === "darkMode") {
+        localStorage.setItem("mode", "darkMode");
+        toggleModes("darkMode");
+    } else if (e.target.parentElement.id === "lightMode") {
+        localStorage.setItem("mode", "lightMode");
+        toggleModes("lightMode");
+    }
+}
+function toggleModes(mode) {
+    dark.classList.toggle("hideIt", mode === "");
+    light.classList.toggle("hideIt", mode === "lightMode");
+    document.body.classList.toggle("darkMode", mode === "darkMode");
+}
 
-// events
-itemForm.addEventListener("submit", addItems);
-itemList.addEventListener("click", delItem);
-itemClear.addEventListener("click", clearAll);
-filter.addEventListener("input", filterItems);
-checkUi();
+// IFFE
+(function () {
+    itemForm.addEventListener("submit", onAddItemSubmit);
+    itemList.addEventListener("click", onClickItem);
+    itemClear.addEventListener("click", clearAll);
+    filter.addEventListener("input", filterItems);
+    document.addEventListener("DOMContentLoaded", displayItems);
+    darkMode.addEventListener("click", switchModes);
+    checkUi();
+})();
