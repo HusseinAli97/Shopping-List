@@ -197,9 +197,15 @@ function switchModes(e) {
     }
 }
 function toggleModes(mode) {
-    dark.classList.toggle("hideIt", mode === "");
-    light.classList.toggle("hideIt", mode === "lightMode");
-    document.body.classList.toggle("darkMode", mode === "darkMode");
+    if (mode === "darkMode") {
+        dark.classList.add("hideIt");
+        light.classList.remove("hideIt");
+        document.body.classList.add("darkMode");
+    } else {
+        dark.classList.remove("hideIt");
+        light.classList.add("hideIt");
+        document.body.classList.remove("darkMode");
+    }
 }
 
 // IFFE

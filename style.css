@@ -63,6 +63,16 @@ header .mainTitle {
   cursor: pointer;
   background-color: transparent;
 }
+#darkMode , #lightMode {
+  position: relative;
+}
+#ligtMode{
+  z-index: 2;
+}
+#darkMode {
+  z-index: 5;
+}
+
 
 #darkMode i ,#lightMode i{
   transition: .4s;
