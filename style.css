@@ -63,18 +63,22 @@ header .mainTitle {
   cursor: pointer;
   background-color: transparent;
 }
-#darkMode , #lightMode {
+
+#darkMode,
+#lightMode {
   position: relative;
 }
-#ligtMode{
+
+#ligtMode {
   z-index: 2;
 }
+
 #darkMode {
   z-index: 5;
 }
 
-
-#darkMode i ,#lightMode i{
+#darkMode i,
+#lightMode i {
   transition: .4s;
 }
 
@@ -82,8 +86,6 @@ header .mainTitle {
 #lightMode:hover i {
   scale: 1.1;
 }
-
-
 
 /* Form & Input */
 .form-input {
@@ -198,6 +200,7 @@ header .mainTitle {
   color: white;
 }
 
+/* darkMode style */
 .darkMode {
   background-color: var(--darkMode);
 }
@@ -257,6 +260,12 @@ header .mainTitle {
   background-color: #fea70f;
   color: white;
 }
-.darkMode button .fa-lightbulb  {
+
+.darkMode button .fa-lightbulb {
   color: white;
+}
+
+.darkMode .form-input-filter {
+  color: var(--darkModeFontColor);
+  background-color: black;
 }
